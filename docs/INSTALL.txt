@@ -1,0 +1,49 @@
+Products.FileWritingMailHost Installation
+=========================================
+
+To install Products.FileWritingMailHost into the global Python environment (or a workingenv),
+using a traditional Zope 2 instance, you can do this:
+
+- When you're reading this you have probably already run 
+  ``easy_install Products.FileWritingMailHost``. Find out how to install setuptools
+  (and EasyInstall) here:
+  http://peak.telecommunity.com/DevCenter/EasyInstall
+
+Alternatively, if you are using zc.buildout and the plone.recipe.zope2instance
+recipe to manage your project, you can do this:
+
+- Add ``Products.FileWritingMailHost`` to the list of eggs to install, e.g.::
+
+    [buildout]
+    ...
+    eggs =
+        ...
+        Products.FileWritingMailHost
+
+- Specify the directory to write mail files to with an environment variable::
+
+    [instance]
+    ...
+    environment-vars = 
+        ...
+        FILEWRITING_MAILHOST_MAILDIR /tmp/my_fake_mails/
+
+- If you want to enable FileWritingMailHost when debug-mode is off::
+
+    [instance]
+    ...
+    environment-vars = 
+        ...
+        ENABLE_FILEWRITING_MAILHOST True
+
+- If you want to disable FileWritingMailHost when debug-mode is on::
+
+    [instance]
+    ...
+    environment-vars = 
+        ...
+        ENABLE_FILEWRITING_MAILHOST False
+
+- Re-run buildout in order to make any of the above changes active::
+
+    $ ./bin/buildout

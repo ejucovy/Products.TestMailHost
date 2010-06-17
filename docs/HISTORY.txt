@@ -1,0 +1,7 @@
+Changelog
+=========
+
+0.1
+---
+
+Forked from Products.PrintingMailHost latest release (0.7)

@@ -1,0 +1,57 @@
+TestMailHost
+============
+
+This is a hack of a hack. :)
+
+This product, when installed, will monkeypatch Zope's MailHost class, meaning 
+that *any and all* uses of a MailHost will be "fixed" so that instead of sending 
+mail, it writes the full mail messages to files on the filesystem.
+
+If possible (ie, if a site, request and response can be found) a special HTTP
+header "X-Debug-Mail-Location" is added to the HTTP response, containing a
+semicolon-separated list of filesystem paths to the mails written out during the
+request.
+
+Additionally, a Set-Cookie header is emitted, with the same value(s).
+
+This is useful for test scripts -- a test client can issue an HTTP request,
+look for the X-Debug-Mail-Location header in the HTTP response, and make
+assertions about the expected results such as:
+
+No mail should have been sent by this request::
+  assert 'X-Debug-Mail-Location' not in response.headers
+
+Three mails should have been sent during this request::
+  assert len(response.headers.get('X-Debug-Mail-Location', '').split(';')) == 3
+
+A specific mail should have been sent during this request::
+  open_file_on_server_and_read_its_contents(remote_path=response.headers['X-Debug-Mail-Location'])
+
+The Set-Cookie header is also sent for the benefit of "browser-like" clients,
+specifically twill. If mails are sent during a request with a 3xx (redirected)
+response, twill will follow the redirect automatically, which makes it difficult
+to extract headers from the original (redirected) response.  Since the server
+sends a Set-Cookie header too, twill's browser will store the cookie, and the
+client can read that cookie value to get the most recent mails sent during a
+request.  (See the package twill-testmailclient for more on this.)
+
+If Zope is not running in debug mode, *TestMailHost will still install itself.*
+So *be sure not to install it on a production site!*
+
+Installation
+------------
+
+When the Python package is installed in your Zope environment, it will automatically
+inject its monkeypatches into your Zope instance. See docs/INSTALL for more details.
+
+You must provide an environment variable TEST_MAILHOST_MAILDIR which should be
+the full path to the directory on the filesystem where mail files will be written.
+The directory should exist with the necessary permissions for the user/group running
+the Zope process.
+
+Credits
+-------
+
+This package is a cheap fork of Martin Aspeli's Products.PrintingMailhost.  
+See that package's README for the real credits. :)
+
